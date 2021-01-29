@@ -1,333 +1,221 @@
-let defaultRowCount = 15; // No of rows
-let defaultColCount = 12; // No of cols
-const SPREADSHEET_DB = "spreadsheet_db";
+/* Global variable functions
+ * These are up top to allow for quicker
+ * changes, when a user decides to modify
+ * what skills are available.
+ */
+//Returns a list of valid core stats
+function global_cores(){
+	return ([
+		["intelligence", "int"], 
+		["wisdom", "wis"], 
+		["charisma", "cha"], 
+		["constitution", "con"], 
+		["strength", "str"], 
+		["dexterity", "dex"]
+	]);
+}
 
-initializeData = () => {
-  // console.log("initializeData");
-  const data = [];
-  for (let i = 0; i <= defaultRowCount; i++) {
-    const child = [];
-    for (let j = 0; j <= defaultColCount; j++) {
-      child.push("");
-    }
-    data.push(child);
-  }
-  return data;
-};
+//Returns a list of valid skills
+function global_skills(){
+	return  (["acro", "anihan", "arcana", "ath", "dec", "hist", "ins", "intim", "inv", "med", "nat", "perc", "perf", "pers", "rel", "soh", "ste", "surv"]);
+}
+//End global variable functions
 
-getData = () => {
-  let data = localStorage.getItem(SPREADSHEET_DB);
-  if (data === undefined || data === null) {
-    return initializeData();
-  }
-  return JSON.parse(data);
-};
+(function(){
+	if(window.addEventListener){
+		window.addEventListener("DOMContentLoaded", page_loaded, false);
+	}else{
+		window.attachEvent('onload', page_loaded);
+	}
+}());
 
-saveData = data => {
-  localStorage.setItem(SPREADSHEET_DB, JSON.stringify(data));
-};
+function page_loaded(){
+	//Initialise Selectors for Input
+	var input_cols = new Object();
+	
+	input_cols.uinputs = document.querySelectorAll(".ct-input").length;
+	input_cols.mods = document.querySelectorAll(".ct-modout").length;
+	input_cols.saves = document.querySelectorAll(".ct-saveout").length;
+	input_cols.checks = document.querySelectorAll(".ct-chk").length;
+	
+	if(!check_count(input_cols) || (input_cols.uinputs < 1)){
+		alert("Failed to align columns.");
+		return;
+	}
+	
+	document.addEventListener("click", update_stats);
+	document.addEventListener("keydown", update_stats);
+	document.addEventListener("keyup", update_stats);
+	document.addEventListener("mousemove", update_stats);
+	
+	update_stats();
+}
 
-resetData = data => {
-  localStorage.removeItem(SPREADSHEET_DB);
-  this.createSpreadsheet();
-};
+/* Generates stat objects from 
+ * the passed array.
+ */
+function get_stats(arr){
+	var out = new Object();
+	var idx = "";
+	
+	for(var i = 0; i < arr.length; i++){
+		idx = arr[i][1];
+		out[idx] = new stat_obj(arr[i][0], arr[i][1]);
+	}
+	return out;
+}
 
-createHeaderRow = () => {
-  const tr = document.createElement("tr");
-  tr.setAttribute("id", "h-0");
-  for (let i = 0; i <= defaultColCount; i++) {
-    const th = document.createElement("th");
-    th.setAttribute("id", `h-0-${i}`);
-    th.setAttribute("class", `${i === 0 ? "" : "column-header"}`);
-    // th.innerHTML = i === 0 ? `` : `Col ${i}`;
-    if (i !== 0) {
-      const span = document.createElement("span");
-      span.innerHTML = `Col ${i}`;
-      span.setAttribute("class", "column-header-span");
-      const dropDownDiv = document.createElement("div");
-      dropDownDiv.setAttribute("class", "dropdown");
-      dropDownDiv.innerHTML = `<button class="dropbtn" id="col-dropbtn-${i}">+</button>
-        <div id="col-dropdown-${i}" class="dropdown-content">
-          <p class="col-insert-left">Insert 1 column left</p>
-          <p class="col-insert-right">Insert 1 column right</p>
-          <p class="col-delete">Delete column</p>
-        </div>`;
-      th.appendChild(span);
-      th.appendChild(dropDownDiv);
-    }
-    tr.appendChild(th);
-  }
-  return tr;
-};
+//Checks to make sure columns are aligned
+function check_count(x){
+	if(!(x.uinputs == x.mods) || 
+		!(x.mods == x.saves) ||
+		!(x.saves == x.checks) ||
+		!(x.checks == x.uinputs)){
+			return false;
+	}
+	return true;
+}
 
-createTableBodyRow = rowNum => {
-  const tr = document.createElement("tr");
-  tr.setAttribute("id", `r-${rowNum}`);
-  for (let i = 0; i <= defaultColCount; i++) {
-    const cell = document.createElement(`${i === 0 ? "th" : "td"}`);
-    if (i === 0) {
-      cell.contentEditable = false;
-      const span = document.createElement("span");
-      const dropDownDiv = document.createElement("div");
-      span.innerHTML = rowNum;
-      dropDownDiv.setAttribute("class", "dropdown");
-      dropDownDiv.innerHTML = `<button class="dropbtn" id="row-dropbtn-${rowNum}">+</button>
-        <div id="row-dropdown-${rowNum}" class="dropdown-content">
-          <p class="row-insert-top">Insert 1 row above</p>
-          <p class="row-insert-bottom">Insert 1 row below</p>
-          <p class="row-delete">Delete row</p>
-        </div>`;
-      cell.appendChild(span);
-      cell.appendChild(dropDownDiv);
-      cell.setAttribute("class", "row-header");
-    } else {
-      cell.contentEditable = true;
-    }
-    cell.setAttribute("id", `r-${rowNum}-${i}`);
-    // cell.id = `${rowNum}-${i}`;
-    tr.appendChild(cell);
-  }
-  return tr;
-};
+/* Takes a string for the stat name, the user input field ID,
+ * the modifier field ID, the saving throws field ID, and the
+ * saving throw checkbox ID
+ * 
+ * Returns an object with these fields instantiated and
+ * some object-level methods
+ */
+/* Creates an object to be used to store stat data
+ */
+function stat_obj(stat_name, prefix){
+	this.name = String(stat_name);
+	this.pf = String(prefix);
+	
+	this.inp_e = function(){return document.getElementById(this.pf + "-input");};
+	this.mod_e = function(){return document.getElementById(this.pf + "-mod");};
+	this.save_e = function(){return document.getElementById(this.pf + "-save");};
+	this.prof_e = function(){return document.getElementById(this.pf + "-prof");};
+	
+	this.inp_v = this.inp_e().value;
+	this.mod_v = this.mod_e().value;
+	this.save_v = this.save_e().value;
+	this.prof_v = this.prof_e().checked;
+	
+	this.mod_u = function(){this.mod_e().value = calc_mod(this.inp_e().value);};
+	this.save_u = function(){this.save_e().value = ((this.prof_e().checked) ? (parseInt(this.mod_e().value) + get_prof()) : (parseInt(this.mod_e().value)));};
+}
 
-createTableBody = tableBody => {
-  for (let rowNum = 1; rowNum <= defaultRowCount; rowNum++) {
-    tableBody.appendChild(this.createTableBodyRow(rowNum));
-  }
-};
+//Updates all the core stats
+function update_stats(){
+	var stats = get_stats(global_cores());
+	
+	for(var stat in stats){
+		stats[stat].mod_u();
+		stats[stat].save_u();
+	}
+	
+	update_prof();
+	update_skills();
+}
 
-// Fill Data in created table from localstorage
-populateTable = () => {
-  const data = this.getData();
-  if (data === undefined || data === null) return;
+/* Calculates the modifier for a skill
+ * based on integer input.
+ */
+function calc_mod(x){
+	var test = 2;
+	var mod = -5;
+	
+	while(x > test - 1){
+		test += 2;
+		mod++;
+	}
+	return mod;
+}
 
-  for (let i = 1; i < data.length; i++) {
-    for (let j = 1; j < data[i].length; j++) {
-      const cell = document.getElementById(`r-${i}-${j}`);
-      cell.innerHTML = data[i][j];
-    }
-  }
-};
+//Updates proficiency bonus
+function update_prof(){
+	var pf = document.getElementById("char-prof");
+	pf.value = get_prof();
+}
 
-// Utility function to add row
-addRow = (currentRow, direction) => {
-  let data = this.getData();
-  const colCount = data[0].length;
-  const newRow = new Array(colCount).fill("");
-  if (direction === "top") {
-    data.splice(currentRow, 0, newRow);
-  } else if (direction === "bottom") {
-    data.splice(currentRow + 1, 0, newRow);
-  }
-  defaultRowCount++;
-  saveData(data);
-  this.createSpreadsheet();
-};
+//Gets proficiency bonus
+function get_prof(){
+	var bonus = document.getElementById("char-level").value;
+	return calc_prof(bonus);
+}
 
-// Utility function to delete row
-deleteRow = currentRow => {
-  let data = this.getData();
-  data.splice(currentRow, 1);
-  defaultRowCount++;
-  saveData(data);
-  this.createSpreadsheet();
-};
+/* Calculates the proficiency
+ * bonus for a player, based on their
+ * character level.
+ * 
+ * To allow higher proficiency, uncomment the
+ * first return statement, and comment the second
+ * out. This was removed,
+ * because D&D doesn't support more than a
+ * +6 bonus.
+ */
+function calc_prof(x){
+	var test = 4;
+	var mod = 2;
+	
+	while(x > test){
+		test += 4;
+		mod++;
+	}
+	//return mod;
+	return ((mod > 6) ? 6 : mod);
+}
 
-// Utility function to add columns
-addColumn = (currentCol, direction) => {
-  let data = this.getData();
-  for (let i = 0; i <= defaultRowCount; i++) {
-    if (direction === "left") {
-      data[i].splice(currentCol, 0, "");
-    } else if (direction === "right") {
-      data[i].splice(currentCol + 1, 0, "");
-    }
-  }
-  defaultColCount++;
-  saveData(data);
-  this.createSpreadsheet();
-};
+/* Calculates the bonuses for secondary
+ * skills, based on proficiencies and the
+ * stat modifiers for their core stat.
+ */
+function update_skills(){
+	var skills = new get_skills(global_skills());
+	
+	for(var skill in skills){
+		skills[skill].outp_u();
+	}
+}
 
-// Utility function to delete column
-deleteColumn = currentCol => {
-  let data = this.getData();
-  for (let i = 0; i <= defaultRowCount; i++) {
-    data[i].splice(currentCol, 1);
-  }
-  defaultColCount++;
-  saveData(data);
-  this.createSpreadsheet();
-};
+/* Get a list of skills as elements
+ */
+function get_skills(arr){
+	var name = "";
+	for(var i = 0; i < arr.length; i++){
+		name = String(arr[i]);
+		this[name] = new gen_skill(name);
+	}
+}
 
-// Map for storing the sorting history of every column;
-const sortingHistory = new Map();
+/* Create a skill and its associated functions.
+ */
+function gen_skill(prefix){
+	this.pf = String(prefix);
+	
+	this.outp = function(){return document.getElementById(this.pf + "-out");};
+	this.name_in = function(){return document.getElementById(this.pf + "-name");};
+	this.modby = function(){return document.getElementById(this.pf + "-modby");};
+	this.prof = function(){return document.getElementById(this.pf + "-prof");};
+	
+	this.name_v = this.name_in().value;
+	this.modby_v = this.modby().value;
+	this.prof_ck = this.prof().checked;
+	
+	this.outp_u = function(){this.outp().value = get_skbonus(this.modby().value, this.prof().checked);};
+}
 
-// Utility function to sort columns
-sortColumn = currentCol => {
-  let spreadSheetData = this.getData();
-  let data = spreadSheetData.slice(1);
-  if (!data.some(a => a[currentCol] !== "")) return;
-  if (sortingHistory.has(currentCol)) {
-    const sortOrder = sortingHistory.get(currentCol);
-    switch (sortOrder) {
-      case "desc":
-        data.sort(ascSort.bind(this, currentCol));
-        sortingHistory.set(currentCol, "asc");
-        break;
-      case "asc":
-        data.sort(dscSort.bind(this, currentCol));
-        sortingHistory.set(currentCol, "desc");
-        break;
-    }
-  } else {
-    data.sort(ascSort.bind(this, currentCol));
-    sortingHistory.set(currentCol, "asc");
-  }
-  data.splice(0, 0, new Array(data[0].length).fill(""));
-  saveData(data);
-  this.createSpreadsheet();
-};
-
-// Compare Functions for sorting - ascending
-const ascSort = (currentCol, a, b) => {
-  let _a = a[currentCol];
-  let _b = b[currentCol];
-  if (_a === "") return 1;
-  if (_b === "") return -1;
-
-  // Check for strings and numbers
-  if (isNaN(_a) || isNaN(_b)) {
-    _a = _a.toUpperCase();
-    _b = _b.toUpperCase();
-    if (_a < _b) return -1;
-    if (_a > _b) return 1;
-    return 0;
-  }
-  return _a - _b;
-};
-
-// Descending compare function
-const dscSort = (currentCol, a, b) => {
-  let _a = a[currentCol];
-  let _b = b[currentCol];
-  if (_a === "") return 1;
-  if (_b === "") return -1;
-
-  // Check for strings and numbers
-  if (isNaN(_a) || isNaN(_b)) {
-    _a = _a.toUpperCase();
-    _b = _b.toUpperCase();
-    if (_a < _b) return 1;
-    if (_a > _b) return -1;
-    return 0;
-  }
-  return _b - _a;
-};
-
-createSpreadsheet = () => {
-  const spreadsheetData = this.getData();
-  defaultRowCount = spreadsheetData.length - 1 || defaultRowCount;
-  defaultColCount = spreadsheetData[0].length - 1 || defaultColCount;
-
-  const tableHeaderElement = document.getElementById("table-headers");
-  const tableBodyElement = document.getElementById("table-body");
-
-  const tableBody = tableBodyElement.cloneNode(true);
-  tableBodyElement.parentNode.replaceChild(tableBody, tableBodyElement);
-  const tableHeaders = tableHeaderElement.cloneNode(true);
-  tableHeaderElement.parentNode.replaceChild(tableHeaders, tableHeaderElement);
-
-  tableHeaders.innerHTML = "";
-  tableBody.innerHTML = "";
-
-  tableHeaders.appendChild(createHeaderRow(defaultColCount));
-  createTableBody(tableBody, defaultRowCount, defaultColCount);
-
-  populateTable();
-
-  // attach focusout event listener to whole table body container
-  tableBody.addEventListener("focusout", function(e) {
-    if (e.target && e.target.nodeName === "TD") {
-      let item = e.target;
-      const indices = item.id.split("-");
-      let spreadsheetData = getData();
-      spreadsheetData[indices[1]][indices[2]] = item.innerHTML;
-      saveData(spreadsheetData);
-    }
-  });
-
-  // Attach click event listener to table body
-  tableBody.addEventListener("click", function(e) {
-    if (e.target) {
-      if (e.target.className === "dropbtn") {
-        const idArr = e.target.id.split("-");
-        document
-          .getElementById(`row-dropdown-${idArr[2]}`)
-          .classList.toggle("show");
-      }
-      if (e.target.className === "row-insert-top") {
-        const indices = e.target.parentNode.id.split("-");
-        addRow(parseInt(indices[2]), "top");
-      }
-      if (e.target.className === "row-insert-bottom") {
-        const indices = e.target.parentNode.id.split("-");
-        addRow(parseInt(indices[2]), "bottom");
-      }
-      if (e.target.className === "row-delete") {
-        const indices = e.target.parentNode.id.split("-");
-        deleteRow(parseInt(indices[2]));
-      }
-    }
-  });
-
-  // Attach click event listener to table headers
-  tableHeaders.addEventListener("click", function(e) {
-    if (e.target) {
-      if (e.target.className === "column-header-span") {
-        sortColumn(parseInt(e.target.parentNode.id.split("-")[2]));
-      }
-      if (e.target.className === "dropbtn") {
-        const idArr = e.target.id.split("-");
-        document
-          .getElementById(`col-dropdown-${idArr[2]}`)
-          .classList.toggle("show");
-      }
-      if (e.target.className === "col-insert-left") {
-        const indices = e.target.parentNode.id.split("-");
-        addColumn(parseInt(indices[2]), "left");
-      }
-      if (e.target.className === "col-insert-right") {
-        const indices = e.target.parentNode.id.split("-");
-        addColumn(parseInt(indices[2]), "right");
-      }
-      if (e.target.className === "col-delete") {
-        const indices = e.target.parentNode.id.split("-");
-        deleteColumn(parseInt(indices[2]));
-      }
-    }
-  });
-};
-
-createSpreadsheet();
-
-// Close the dropdown menu if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches(".dropbtn")) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains("show")) {
-        openDropdown.classList.remove("show");
-      }
-    }
-  }
-};
-
-document.getElementById("reset").addEventListener("click", e => {
-  if (
-    confirm("This will erase all data and set default configs. Are you sure?")
-  ) {
-    this.resetData();
-  }
-});
+/* Determine how much bonus to give to a specific
+ * skill check.
+ */
+function get_skbonus(modifier, proficiency=false){
+	var mod = String(modifier).toLowerCase();
+	var stats = get_stats(global_cores());
+	var out = 0;
+	
+	for(var stat in stats){
+		if(stats[stat].pf == mod){
+			out = (parseInt(stats[stat].mod_v) + ((proficiency) ? get_prof() : 0));
+			break;
+		}
+	}
+	return out;
+}
