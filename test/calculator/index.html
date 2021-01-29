@@ -1,46 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible"
-        content="ie=edge">
-  <!-- <link rel="stylesheet" href="/style.css" /> -->
-  <link rel="stylesheet" href="/calc.css" />
-    <link rel="shortcut icon"
-        href="img/google-sheets-logo-.png"
-        type="image/x-icon">
-    <title>Simple Spreadsheet</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="/style.css" />
+        <link rel="stylesheet" href="/calc.css" />
+        <script src='dndcalc.js'></script>
+        <title>Simple Spreadsheet</title>
+    </head>
 
-<body>
-    <section class="title">
-        <img src="img/google-sheets-logo-.png"
-            alt="sheets"
-            class="title__logo">
-        <div class="title__text">
-            <h1 class="title__text--name">Simple Spreadsheet</h1>
-            <h3 class="title__text--description">A basic spreadsheet made with HTML5, CSS and JavaScript</h3>
-        </div>
-    </section>
-    <section class="spreadsheet">
-        <table class="spreadsheet__table"
-            id="table-main">
-            <thead class="spreadsheet__table--headers"
-                id="table-headers">
-            </thead>
-            <tbody class="spreadsheet__table--body"
-                id="table-body">
-            </tbody>
-        </table>
-    </section>
-    <section class="spreadsheet-controls">
-        <button class="reset-btn"
-            id="reset">Reset Data</button>
-    </section>
-    <script src="calc.js"></script>
-</body>
-
+	<body>
+		<div id='bg-charas'>
+			<div id='chara01'></div>
+		</div>
+		<div id='content'>
+			<!--CHARACTER INFO-->
+			<div id='chara-info-div'>
+				<label for='char-name'>Character Name: </label><input type='text' name='char_name' id='char-name' title='Name'/><br />
+				<label for='char-level'>Character Level: </label><input type='number' name='char_level' id='char-level' value='1' min='1' title='Level'/><br />
+				<label for='char-prof'>Proficiency Bonus: </label><input type='number' name='char_prof' id='char-prof' value='2' min='2' title='Proficiency Bonus' disabled="disabled"/>
+			</div>
+			<!--END CHARACTER INFO-->
+			
+			<!--STATS-->
+			<table id='stat-table'>
+				<tr class='ct-row-normal'>
+					<th></th>
+					<th>Strength</th><th>Dexterity</th><th>Constitution</td>
+					<th>Intelligence</td><th>Wisdom</th><th>Charisma</th>
+				</tr>
+				<tr class='ct-row-normal'>
+					<td class='ct-right'>Core Skill</th>
+					<td><input type='number' name='str_input' id='str-input' class='ct-txt-norm ct-input' value='1' min='1' title='Strength'/></td>
+					<td><input type='number' name='dex_input' id='dex-input' class='ct-txt-norm ct-input' value='1' min='1' title='Dexterity'/></td>
+					<td><input type='number' name='con_input' id='con-input' class='ct-txt-norm ct-input' value='1' min='1' title='Constitution'/></td>
+					<td><input type='number' name='int_input' id='int-input' class='ct-txt-norm ct-input' value='1' min='1' title='Intelligence'/></td>
+					<td><input type='number' name='wis_input' id='wis-input' class='ct-txt-norm ct-input' value='1' min='1' title='Wisdom'/></td>
+					<td><input type='number' name='cha_input' id='cha-input' class='ct-txt-norm ct-input' value='1' min='1' title='Charisma'/></td>
+				</tr>
+				<tr class='ct-row-normal'>
+					<td class='ct-right'>Modifier</td>
+					<td><input type='number' name='str_mod' id='str-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='dex_mod' id='dex-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='con_mod' id='con-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='int_mod' id='int-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='wis_mod' id='wis-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='cha_mod' id='cha-mod'  class='ct-txt-norm ct-modout' value='0' title='' disabled='disabled'/></td>
+				</tr>
+				<tr class='ct-row-normal'>
+					<td class='ct-right'>Saving Throw</td>
+					<td><input type='number' name='str_save' id='str-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='dex_save' id='dex-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='con_save' id='con-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='int_save' id='int-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='wis_save' id='wis-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+					<td><input type='number' name='cha_save' id='cha-save'  class='ct-txt-norm ct-saveout' value='0' title='' disabled='disabled'/></td>
+				</tr>
+				<tr class='ct-row-normal'>
+					<td class='ct-right'>Save?</td>
+					<td><label for="str-prof">Saving Throw? </label><input type='checkbox' name='str_prof' id='str-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+					<td><label for="dex-prof">Saving Throw? </label><input type='checkbox' name='dex_prof' id='dex-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+					<td><label for="con-prof">Saving Throw? </label><input type='checkbox' name='con_prof' id='con-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+					<td><label for="int-prof">Saving Throw? </label><input type='checkbox' name='int_prof' id='int-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+					<td><label for="wis-prof">Saving Throw? </label><input type='checkbox' name='wis_prof' id='wis-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+					<td><label for="cha-prof">Saving Throw? </label><input type='checkbox' name='cha_prof' id='cha-prof' value="prof" class='ct-chk-norm ct-chk'/></td>
+				</tr>
+			</table>
+			<!--END STATS-->
+			<!-- -------SEPARATOR------- -->
+			<!--SKILLS-->
+			<table id="skill-table">
+				<tr>
+					<th>Bonus</th><th>Skill</th><th>Modifier</th><th>Skill Proficiency</th>
+				</tr>
+				<tr>
+					<td><input type="number" name="acro_out" id="acro-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="acro_name" id="acro-name" class="ct-txt-norm" value="Acrobatics" title="Acrobatics" disabled="disabled"/></td>
+					<td><input type="text" name="acro_modby" id="acro-modby" class="ct-txt-norm" value="dex" title="dex" disabled="disabled"/></td>
+					<td><label for="acro-prof">Proficient? </label><input type="checkbox" name="acro_prof" id="acro-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="anihan_out" id="anihan-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="anihan_name" id="anihan-name" class="ct-txt-norm" value="Animal Handling" title="Animal Handling" disabled="disabled"/></td>
+					<td><input type="text" name="anihan_modby" id="anihan-modby" class="ct-txt-norm" value="wis" title="wis" disabled="disabled"/></td>
+					<td><label for="anihan-prof">Proficient? </label><input type="checkbox" name="anihan_prof" id="anihan-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="arcana_out" id="arcana-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="arcana_name" id="arcana-name" class="ct-txt-norm" value="Arcana" title="Arcana" disabled="disabled"/></td>
+					<td><input type="text" name="arcana_modby" id="arcana-modby" class="ct-txt-norm" value="int" title="int" disabled="disabled"/></td>
+					<td><label for="arcana-prof">Proficient? </label><input type="checkbox" name="arcana_prof" id="arcana-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="ath_out" id="ath-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="ath_name" id="ath-name" class="ct-txt-norm" value="Athletics" title="Athletics" disabled="disabled"/></td>
+					<td><input type="text" name="ath_modby" id="ath-modby" class="ct-txt-norm" value="str" title="str" disabled="disabled"/></td>
+					<td><label for="ath-prof">Proficient? </label><input type="checkbox" name="ath_prof" id="ath-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="dec_out" id="dec-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="dec_name" id="dec-name" class="ct-txt-norm" value="Deception" title="Deception" disabled="disabled"/></td>
+					<td><input type="text" name="dec_modby" id="dec-modby" class="ct-txt-norm" value="cha" title="cha" disabled="disabled"/></td>
+					<td><label for="dec-prof">Proficient? </label><input type="checkbox" name="dec_prof" id="dec-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="hist_out" id="hist-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="hist_name" id="hist-name" class="ct-txt-norm" value="History" title="History" disabled="disabled"/></td>
+					<td><input type="text" name="hist_modby" id="hist-modby" class="ct-txt-norm" value="int" title="int" disabled="disabled"/></td>
+					<td><label for="hist-prof">Proficient? </label><input type="checkbox" name="hist_prof" id="hist-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="ins_out" id="ins-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="ins_name" id="ins-name" class="ct-txt-norm" value="Insight" title="Insight" disabled="disabled"/></td>
+					<td><input type="text" name="ins_modby" id="ins-modby" class="ct-txt-norm" value="wis" title="wis" disabled="disabled"/></td>
+					<td><label for="ins-prof">Proficient? </label><input type="checkbox" name="ins_prof" id="ins-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="intim_out" id="intim-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="intim_name" id="intim-name" class="ct-txt-norm" value="Intimidation" title="Intimidation" disabled="disabled"/></td>
+					<td><input type="text" name="intim_modby" id="intim-modby" class="ct-txt-norm" value="cha" title="cha" disabled="disabled"/></td>
+					<td><label for="intim-prof">Proficient? </label><input type="checkbox" name="intim_prof" id="intim-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="inv_out" id="inv-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="inv_name" id="inv-name" class="ct-txt-norm" value="Investigation" title="Investigation" disabled="disabled"/></td>
+					<td><input type="text" name="inv_modby" id="inv-modby" class="ct-txt-norm" value="int" title="int" disabled="disabled"/></td>
+					<td><label for="inv-prof">Proficient? </label><input type="checkbox" name="inv_prof" id="inv-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="med_out" id="med-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="med_name" id="med-name" class="ct-txt-norm" value="Medicine" title="Medicine" disabled="disabled"/></td>
+					<td><input type="text" name="med_modby" id="med-modby" class="ct-txt-norm" value="wis" title="wis" disabled="disabled"/></td>
+					<td><label for="med-prof">Proficient? </label><input type="checkbox" name="med_prof" id="med-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="nat_out" id="nat-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="nat_name" id="nat-name" class="ct-txt-norm" value="Nature" title="Nature" disabled="disabled"/></td>
+					<td><input type="text" name="nat_modby" id="nat-modby" class="ct-txt-norm" value="int" title="int" disabled="disabled"/></td>
+					<td><label for="nat-prof">Proficient? </label><input type="checkbox" name="nat_prof" id="nat-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="perc_out" id="perc-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="perc_name" id="perc-name" class="ct-txt-norm" value="Perception" title="Perception" disabled="disabled"/></td>
+					<td><input type="text" name="perc_modby" id="perc-modby" class="ct-txt-norm" value="wis" title="wis" disabled="disabled"/></td>
+					<td><label for="perc-prof">Proficient? </label><input type="checkbox" name="perc_prof" id="perc-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="perf_out" id="perf-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="perf_name" id="perf-name" class="ct-txt-norm" value="Performance" title="Performance" disabled="disabled"/></td>
+					<td><input type="text" name="perf_modby" id="perf-modby" class="ct-txt-norm" value="cha" title="cha" disabled="disabled"/></td>
+					<td><label for="perf-prof">Proficient? </label><input type="checkbox" name="perf_prof" id="perf-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="pers_out" id="pers-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="pers_name" id="pers-name" class="ct-txt-norm" value="Persuasion" title="Persuasion" disabled="disabled"/></td>
+					<td><input type="text" name="pers_modby" id="pers-modby" class="ct-txt-norm" value="cha" title="cha" disabled="disabled"/></td>
+					<td><label for="pers-prof">Proficient? </label><input type="checkbox" name="pers_prof" id="pers-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="rel_out" id="rel-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="rel_name" id="rel-name" class="ct-txt-norm" value="Religion" title="Religion" disabled="disabled"/></td>
+					<td><input type="text" name="rel_modby" id="rel-modby" class="ct-txt-norm" value="int" title="int" disabled="disabled"/></td>
+					<td><label for="rel-prof">Proficient? </label><input type="checkbox" name="rel_prof" id="rel-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="soh_out" id="soh-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="soh_name" id="soh-name" class="ct-txt-norm" value="Sleight of Hand" title="Sleight of Hand" disabled="disabled"/></td>
+					<td><input type="text" name="soh_modby" id="soh-modby" class="ct-txt-norm" value="dex" title="dex" disabled="disabled"/></td>
+					<td><label for="soh-prof">Proficient? </label><input type="checkbox" name="soh_prof" id="soh-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="ste_out" id="ste-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="ste_name" id="ste-name" class="ct-txt-norm" value="Stealth" title="Stealth" disabled="disabled"/></td>
+					<td><input type="text" name="ste_modby" id="ste-modby" class="ct-txt-norm" value="dex" title="dex" disabled="disabled"/></td>
+					<td><label for="ste-prof">Proficient? </label><input type="checkbox" name="ste_prof" id="ste-prof" class="ct-chk-norm"/></td>
+				</tr>
+				<tr>
+					<td><input type="number" name="surv_out" id="surv-out" class="ct-txt-norm" value="0" disabled="disabled"/></td>
+					<td><input type="text" name="surv_name" id="surv-name" class="ct-txt-norm" value="Survival" title="Survival" disabled="disabled"/></td>
+					<td><input type="text" name="surv_modby" id="surv-modby" class="ct-txt-norm" value="wis" title="wis" disabled="disabled"/></td>
+					<td><label for="surv-prof">Proficient? </label><input type="checkbox" name="surv_prof" id="surv-prof" class="ct-chk-norm"/></td>
+				</tr>
+			</table>
+			<!--END SKILLS-->
+		</div>
+	</body>
 </html>
