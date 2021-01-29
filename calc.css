@@ -1,161 +1,118 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 html {
-  font-size: 62.5%;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	overflow:hidden;
+	width:100%;
+	height:100%;
+	padding:0;
+	margin:0;
+} 
+
+body {
+	overflow-y:auto;
+	overflow-x:hidden;
+	width:100%;
+	
+	padding:0;
+	margin:0;
+	
+	background-color:rgba(200,130,130,1);
+	
+	background-image:url('media/bg.png');
+	background-size:100% 100%;
+	background-repeat:no-repeat;
+	background-attachment:fixed;
 }
 
-.title {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  margin: 1rem;
+#bg-charas {
+	position:fixed;
+	width:100%;
+	height:100%;
+	padding:0;
+	margin:0;
+	
+	/*background-color:rgba(230,230,230,0.25);*/
+	
+	z-index:-1;
 }
 
-.title__logo {
-  height: 7rem;
-  margin: 1rem;
+#chara01 {
+	position:absolute;
+	right:0;
+	bottom:0;
+	
+	width:50%;
+	height:100%;
+	
+	/*background-color:rgba(230,230,230,0.25);*/
+	
 }
 
-.title__text {
-  margin-left: 2rem;
+#content {
+	margin-left:auto;
+	margin-right:auto;
+	width:80%;
+	height:100%;
+	
+	z-index:2;
 }
 
-.title__text--name {
-  font-size: 3.6rem;
-  display: inline;
-  font-weight: 600;
+#chara-info-div {
+	width:100%;
+	
+	background-color:rgba(200,200,200,0.75);
+	
+	background-image:url('media/banner.png');
+	background-size:contain;
+	background-repeat:no-repeat;
+	background-position:left top;
+	
+	text-align:right;
+	font-weight:bold;
 }
 
-.title__text--description {
-  font-size: 1.6rem;
-  font-weight: 200;
+#stat-table {
+	width:100%;
 }
 
-.spreadsheet {
-  margin: 1rem 0.5rem;
+#stat-table, #skill-table {
+	border-collapse:separate;
+	text-align:center;
+	
+	margin-bottom:1px;
 }
 
-table,
-td,
-th,
-tr {
-  border: 0.05rem solid rgba(197, 197, 197, 0.486);
-  font-size: 1.4rem;
-  height: 2.5rem;
-  border-spacing: 0rem;
+#stat-table tr:nth-child(even), #skill-table tr:nth-child(odd){
+	background-color:rgba(220,220,220,0.85);
 }
 
-th {
-  font-weight: 500;
+#stat-table tr:nth-child(odd), #skill-table tr:nth-child(even){
+	background-color:rgba(200,200,200,0.85);
 }
 
-thead {
-  /* background-color: rgb(160, 180, 206); */
-  background-color: #f1f1f1;
-  /* color: #fff; */
+#stat-table tr:first-child , #skill-table tr:first-child {
+	background-color:rgba(175,175,175,0.85);
 }
 
-td {
-  min-width: 10rem;
-  padding: 0.2rem 0.5rem;
+#stat-table tr:last-child {
+	font-size:1.05em;
 }
 
-th {
-  padding: 0.2rem 0.4rem;
-}
-th > .dropdown {
-  float: right;
+#skill-table td:last-child {
+	font-size:1.1em;
 }
 
-tbody th {
-  min-width: 5rem;
-  background: #fafafa;
+.ct-txt-norm {
+	width:85%;
 }
 
-/* Dropdown Button */
-.dropbtn {
-  background-color: #e2e2e2d0;
-  color: rgba(0, 0, 0, 0.5);
-  padding: 0rem 0.3rem;
-  /* /* font-size: 1.2rem; */
-  border: none;
-  cursor: pointer;
-  transition: ease 0.4s;
+input[type=text], input[type=number] {
+	background-color:rgba(230,230,230,0.85);
+	font-weight:bold;
 }
 
-/* Dropdown button on hover & focus */
-.dropbtn:hover,
-.dropbtn:focus {
-  background-color: #d0d0d0;
-  /* visibility: visible; */
+input[type=text] {
+	text-align:center;
 }
 
-.dropbtn img {
-  height: 2rem;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: white;
-  min-width: 16rem;
-  box-shadow: 0 0.5rem 0.8rem 0 rgba(0, 0, 0, 0.1);
-  z-index: 1;
-}
-
-/* Links inside the dropdown */
-.dropdown-content p {
-  color: rgb(133, 132, 132);
-  padding: 0.4rem;
-  font-weight: 400;
-  text-decoration: none;
-  display: block;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content p:hover {
-  background-color: #ddd;
-}
-
-/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
-.show {
-  display: block;
-}
-
-.column-header-span {
-  cursor: pointer;
-}
-
-.spreadsheet-controls {
-  margin-left: 0.5rem;
-}
-
-.reset-btn {
-  padding: 0.5rem 1.5rem;
-  background-color: #d9534f;
-  color: #fff;
-  border-color: #d43f3a;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 0.3rem;
-  cursor: pointer;
-  transition: ease 0.3s;
-}
-
-.reset-btn:hover {
-  color: #fff;
-  background-color: #c9302c;
-  border-color: #ac2925;
+input[type=number] {
+	text-align:right;
 }
